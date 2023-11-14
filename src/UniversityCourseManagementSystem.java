@@ -31,6 +31,7 @@ public final class UniversityCourseManagementSystem {
                 if(!(input.matches("[a-zA-Z]+(_[a-zA-Z]+)*") && input.length() > 0)){
                     System.out.println("ERR_PNAME");
                 }
+
                 memberName = memberName.toLowerCase();
             }
             else if (input.equals("enroll")) {
