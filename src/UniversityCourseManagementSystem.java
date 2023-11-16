@@ -1,7 +1,9 @@
 import java.util.*;
 
+
+
 public final class UniversityCourseManagementSystem {
-    public static void UniversityCourseManagementSystem(String[] args) {
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         while (scanner.hasNextLine()) {
@@ -13,11 +15,10 @@ public final class UniversityCourseManagementSystem {
                 String courseName = scanner.nextLine();
                 String courseLevel = scanner.nextLine();
                 courseName = courseName.toLowerCase();
-                if(!(courseLevel.equals("bachelor") || courseLevel.equals("master"))){
-                    System.out.println("ERR_CNAME");
-                }
                 CourseLevel cL = CourseLevel.valueOf(courseLevel);
                 Course course = new Course(courseName, cL);
+
+
 
             } else if (input.equals("student")) {
                 String memberName = scanner.nextLine();
@@ -57,49 +58,123 @@ public final class UniversityCourseManagementSystem {
     static void fillInitialData(){
 
     }
+
+    public void error(String code) {
+        switch (code){
+            case "CE":
+                System.out.println("Course exists");
+            case "StdEn":
+                System.out.println("Student is already enrolled in this course");
+            case "MaxEnStd":
+                System.out.println("Maximum enrollment is reached for the student");
+            case "CF":
+                System.out.println("Course is full");
+            case "StdNotEn":
+                System.out.println("Student is not enrolled in this course");
+            case "PfLoad":
+                System.out.println("Professor's load is complete");
+            case "PfT":
+                System.out.println("Professor is already teaching this course");
+            case "PfNotT":
+                System.out.println("Professor is not teaching this course");
+            case "WI":
+                System.out.println("Wrong inputs");
+        }
+        return;
+    }
+    public void checkCourse(Course course){
+        if(!(course.getCourseLevel() == CourseLevel.BACHELOR || course.getCourseLevel() == CourseLevel.MASTER)){
+            error("WI");
+        }
+        for (Course i: Course.getListOfCourses()) {
+            if(i.getCourseName().equals(course.getCourseName())){
+                error("CE");
+            }
+        }
+    }
 }
 enum CourseLevel{
     BACHELOR,
     MASTER;
 }
 class Professor {
-    static int MAX_LOAD;
-    List<Course> assignedCourses;
+    private static int MAX_LOAD;
+    private List<Course> assignedCourses;
 //    public Professor(){
 //        super(Course);
 //    }
-    Professor(String memberName){}
-    boolean teach(Course course){}
-    boolean exempt(Course course){}
+    public Professor(String memberName){}
+    public boolean teach(Course course){}
+    public boolean exempt(Course course){}
+
+    public List<Course> getAssignedCourses() {
+        return assignedCourses;
+    }
 }
 
 class Course{
-    static int CAPACITY;
-    static int numberOfCourses;
-    int courseId;
-    String courseName;
-    List<Student> enrolledStudents;
-    CourseLevel courseLevel;
-    Course (String courseName, CourseLevel courseLevel){}
-    boolean isFull(){}
+    private static int CAPACITY;
+    private static int numberOfCourses;
+    private int courseId;
+    private String courseName;
+    private List<Student> enrolledStudents;
+    private CourseLevel courseLevel;
+    private static List<Course> listOfCourses = new ArrayList<>();
+    public Course (String courseName, CourseLevel courseLevel){
+        this.courseName = courseName;
+        listOfCourses.add(this);
+    }
+    public boolean isFull(){}
+
+    public static List<Course> getListOfCourses() {
+        return listOfCourses;
+    }
+
+    public CourseLevel getCourseLevel() {
+        return courseLevel;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public List<Student> getEnrolledStudents() {
+        return enrolledStudents;
+    }
 }
 
 class Student{
-    static int MAX_ENROLLMENT;
-    List<Course> enrolledCourses;
-    Student(String memberName){}
-    boolean drop(Course course){}
-    boolean enroll(Course course){}
+    private static int MAX_ENROLLMENT;
+    private List<Course> enrolledCourses;
+    public Student(String memberName){}
+    public boolean drop(Course course){}
+    public boolean enroll(Course course){}
+
+    public List<Course> getEnrolledCourses() {
+        return enrolledCourses;
+    }
 }
 
 interface Enrollable{
-    boolean drop(Course course);
-    boolean enroll(Course course);
+    public boolean drop(Course course);
+    public boolean enroll(Course course);
 }
 
 abstract class UniversityMember{
-    static int numberOfMembers;
-    int memberId;
-    String memberName;
-    UniversityMember(int memberId, String memberName){}
+    private static int numberOfMembers;
+    private int memberId;
+    private String memberName;
+    public UniversityMember(int memberId, String memberName){}
+
+    public int getMemberId() {
+        return memberId;
+    }
+
+    public String getMemberName() {
+        return memberName;
+    }
 }
