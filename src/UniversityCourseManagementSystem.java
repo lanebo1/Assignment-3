@@ -1,11 +1,9 @@
 import java.util.*;
 
-
-
 public final class UniversityCourseManagementSystem {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
+        fillInitialData();
         while (scanner.hasNextLine()) {
             String input = scanner.nextLine();
             if (input.isEmpty()) {
@@ -14,52 +12,94 @@ public final class UniversityCourseManagementSystem {
             if (input.equals("course")) {
                 String courseName = scanner.nextLine();
                 String courseLevel = scanner.nextLine();
-                courseName = courseName.toLowerCase();
                 CourseLevel cL = CourseLevel.valueOf(courseLevel);
+                if(!(courseName.matches("[a-zA-Z]+(_[a-zA-Z]+)*") && !courseName.isEmpty())){
+                    error("WI");
+                }
+                if(!(cL == CourseLevel.BACHELOR || cL == CourseLevel.MASTER)){
+                    error("WI");
+                }
+                for (Course i: Course.getListOfCourses()) {
+                    if(i.getCourseName().equals(courseName)){
+                        error("CE");
+                    }
+                }
+                courseName = courseName.toLowerCase();
                 Course course = new Course(courseName, cL);
-
-
-
             } else if (input.equals("student")) {
                 String memberName = scanner.nextLine();
+                memberName = memberName.toLowerCase();
                 if(!memberName.matches("[a-zA-Z ]+")){
                     System.out.println("ERR_SNAME");
                 }
-                memberName = memberName.toLowerCase();
+                Student student = new Student(memberName);
+                success(input);
             }
             else if (input.equals("professor")) {
                 String memberName = scanner.nextLine();
-                if(!(input.matches("[a-zA-Z]+(_[a-zA-Z]+)*") && input.length() > 0)){
-                    System.out.println("ERR_PNAME");
-                }
-
                 memberName = memberName.toLowerCase();
+                if(!memberName.matches("[a-zA-Z ]+")){
+                    System.out.println("ERR_SNAME");
+                }
+                Professor professor = new Professor(memberName);
+                success(input);
             }
             else if (input.equals("enroll")) {
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
+
+                success(input);
             }
             else if (input.equals("drop")) {
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
+
+                success(input);
             }
             else if (input.equals("teach")) {
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
+
+                success(input);
             }
             else if (input.equals("exempt")) {
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
+
+                success(input);
             }
 
         }
         System.out.println("Program execution stopped.");
     }
     static void fillInitialData(){
-
+        Student s1 = new Student("Alice");
+        Student s2 = new Student("Bob");
+        Student s3 = new Student("Alex");
+        Professor p1 = new Professor("Ali");
+        Professor p2 = new Professor("Ahmed");
+        Professor p3 = new Professor("Andrey");
+        Course java_beginner = new Course("java_beginner", CourseLevel.BACHELOR);
+        Course java_intermediate = new Course("java_beginner", CourseLevel.BACHELOR);
+        Course python_basics = new Course("java_beginner", CourseLevel.BACHELOR);
+        Course algorithms = new Course("java_beginner", CourseLevel.MASTER);
+        Course advanced_programming = new Course("java_beginner", CourseLevel.MASTER);
+        Course mathematical_analysis = new Course("java_beginner", CourseLevel.MASTER);
+        Course computer_vision = new Course("java_beginner", CourseLevel.MASTER);
+        s1.enroll(java_beginner);
+        s1.enroll(java_intermediate);
+        s1.enroll(python_basics);
+        s2.enroll(java_beginner);
+        s2.enroll(algorithms);
+        s3.enroll(advanced_programming);
+        p1.teach(java_beginner);
+        p1.teach(java_intermediate);
+        p2.teach(python_basics);
+        p2.teach(advanced_programming);
+        p3.teach(mathematical_analysis);
     }
 
-    public void error(String code) {
+    public static void error(String code) {
         switch (code){
             case "CE":
                 System.out.println("Course exists");
@@ -82,14 +122,22 @@ public final class UniversityCourseManagementSystem {
         }
         return;
     }
-    public void checkCourse(Course course){
-        if(!(course.getCourseLevel() == CourseLevel.BACHELOR || course.getCourseLevel() == CourseLevel.MASTER)){
-            error("WI");
-        }
-        for (Course i: Course.getListOfCourses()) {
-            if(i.getCourseName().equals(course.getCourseName())){
-                error("CE");
-            }
+    public static void success(String code) {
+        switch (code){
+            case "course":
+                System.out.println("Added successfully");
+            case "student":
+                System.out.println("Added successfully");
+            case "professor":
+                System.out.println("Added successfully");
+            case "enroll":
+                System.out.println("Enrolled successfully");
+            case "drop":
+                System.out.println("Dropped successfully");
+            case "exempt":
+                System.out.println("Professor is exempted");
+            case "teach":
+                System.out.println("Professor is successfully assigned to teach this course");
         }
     }
 }
@@ -97,15 +145,31 @@ enum CourseLevel{
     BACHELOR,
     MASTER;
 }
-class Professor {
-    private static int MAX_LOAD;
-    private List<Course> assignedCourses;
-//    public Professor(){
-//        super(Course);
-//    }
-    public Professor(String memberName){}
-    public boolean teach(Course course){}
-    public boolean exempt(Course course){}
+class Professor extends UniversityMember{
+    private static int MAX_LOAD = 2;
+    private List<Course> assignedCourses = new ArrayList<>();
+
+    public Professor(String memberName) {
+        super(UniversityMember.getNumberOfMembers(), memberName);
+    }
+
+    public boolean teach(Course course){
+        if(this.assignedCourses.contains(course)){
+            return false;
+        }
+        if(this.assignedCourses.size() < 2) {
+            return false;
+        }
+        this.assignedCourses.add(course);
+        return true;
+    }
+    public boolean exempt(Course course){
+        if (this.assignedCourses.contains(course)) {
+            this.assignedCourses.remove(course);
+            return true;
+        }
+        return false;
+    }
 
     public List<Course> getAssignedCourses() {
         return assignedCourses;
@@ -113,18 +177,25 @@ class Professor {
 }
 
 class Course{
-    private static int CAPACITY;
-    private static int numberOfCourses;
+    private static final int CAPACITY = 3;
+    private static int numberOfCourses = 0;
     private int courseId;
     private String courseName;
-    private List<Student> enrolledStudents;
-    private CourseLevel courseLevel;
-    private static List<Course> listOfCourses = new ArrayList<>();
+    private final List<Student> enrolledStudents;
+    private final CourseLevel courseLevel;
+    private static List<Course> listOfCourses;
     public Course (String courseName, CourseLevel courseLevel){
         this.courseName = courseName;
+        this.courseLevel = courseLevel;
+        numberOfCourses += 1;
+        this.courseId = numberOfCourses;
+        enrolledStudents = new ArrayList<>();
+        listOfCourses = new ArrayList<>();
         listOfCourses.add(this);
     }
-    public boolean isFull(){}
+    public boolean isFull(){
+        return numberOfCourses == CAPACITY;
+    }
 
     public static List<Course> getListOfCourses() {
         return listOfCourses;
@@ -145,14 +216,40 @@ class Course{
     public List<Student> getEnrolledStudents() {
         return enrolledStudents;
     }
+
+    public int getCAPACITY() {
+        return CAPACITY;
+    }
 }
 
-class Student{
-    private static int MAX_ENROLLMENT;
-    private List<Course> enrolledCourses;
-    public Student(String memberName){}
-    public boolean drop(Course course){}
-    public boolean enroll(Course course){}
+class Student extends UniversityMember{
+    private static final int MAX_ENROLLMENT = 3;
+    private List<Course> enrolledCourses = new ArrayList<>();
+
+    public Student(String memberName) {
+        super(UniversityMember.getNumberOfMembers(), memberName);
+    }
+
+    public boolean drop(Course course){
+        if (this.enrolledCourses.contains(course)) {
+            this.enrolledCourses.remove(course);
+            return true;
+        }
+        return false;
+    }
+    public boolean enroll(Course course){
+        if(this.enrolledCourses.contains(course)){
+            return false;
+        }
+        if(!(this.enrolledCourses.size() < MAX_ENROLLMENT)){
+            return false;
+        }
+        if(!(course.getEnrolledStudents().size() < course.getCAPACITY())){
+            return false;
+        }
+        this.enrolledCourses.add(course);
+        return true;
+    }
 
     public List<Course> getEnrolledCourses() {
         return enrolledCourses;
@@ -165,7 +262,7 @@ interface Enrollable{
 }
 
 abstract class UniversityMember{
-    private static int numberOfMembers;
+    private static int numberOfMembers = 0;
     private int memberId;
     private String memberName;
     public UniversityMember(int memberId, String memberName){}
@@ -173,8 +270,22 @@ abstract class UniversityMember{
     public int getMemberId() {
         return memberId;
     }
-
     public String getMemberName() {
         return memberName;
+    }
+    public static void addNumberOfMembers(){
+        numberOfMembers += 1;
+    }
+    public static int getNumberOfMembers() {
+        addNumberOfMembers();
+        return numberOfMembers;
+    }
+
+    public void setMemberId(int memberId) {
+        this.memberId = memberId;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
     }
 }
