@@ -10,8 +10,8 @@
       <list>
         <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
         <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
-        <ConfigurationLocation id="3d8a2a10-8f23-46e0-868f-2ff44b498682" type="LOCAL_FILE" scope="All" description="Assignment 3">
-          $USER_HOME$/Downloads/ITP_checks.xml
+        <ConfigurationLocation id="26cfcad5-c96f-472c-a011-5e4cf41cf1b7" type="LOCAL_FILE" scope="All" description="Assignment 3">
+          $USER_HOME$/Downloads/ITP_checks_V2.xml
           <option name="properties">
             <map>
               <entry key="org.checkstyle.sun.suppressionfilter.config" value="" />
