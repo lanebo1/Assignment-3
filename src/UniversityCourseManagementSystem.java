@@ -2,11 +2,11 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class UniversityCourseManagementSystem extends Util{
+public final class UniversityCourseManagementSystem{
+    private static ArrayList<Professor> professors = new ArrayList<>();
+    private static ArrayList<Student> students = new ArrayList<>();
+    private static ArrayList<Course> courses = new ArrayList<>();
     public static void main(String[] args) {
-        ArrayList<Professor> professors = new ArrayList<>();
-        ArrayList<Student> students = new ArrayList<>();
-        ArrayList<Course> courses = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
         fillInitialData();
         while (scanner.hasNextLine()) {
@@ -15,7 +15,7 @@ public final class UniversityCourseManagementSystem extends Util{
                 break;
             }
             if (input.equals("course")) {
-                String courseName = scanner.nextLine();
+                String courseName = scanner.nextLine().toLowerCase();
                 String courseLevel = scanner.nextLine();
                 CourseLevel cL = CourseLevel.valueOf(courseLevel.toUpperCase());
                 if (!(courseName.matches("[a-zA-Z]+(_[a-zA-Z]+)*") && !courseName.isEmpty())) {
@@ -26,99 +26,169 @@ public final class UniversityCourseManagementSystem extends Util{
                     error("WI");
                     return;
                 }
-                for (Course i : Course.getListOfCourses()) {
+                for (Course i : courses) {
                     if (i.getCourseName().equals(courseName)) {
                         error("CE");
                         return;
                     }
                 }
-                courseName = courseName.toLowerCase();
                 Course course = new Course(courseName, cL);
                 courses.add(course);
                 success(input);
             } else if (input.equals("student")) {
-                String memberName = scanner.nextLine();
-                memberName = memberName.toLowerCase();
-                if (!memberName.matches("[a-zA-Z ]+")) {
-                    error("WI");
+                String memberName = scanner.nextLine().toLowerCase();
+                if(inputNameCheck(memberName)) {
+                    Student student = new Student(memberName);
+                    students.add(student);
+                    success(input);
+                }
+                else {
                     return;
                 }
-                Student student = new Student(memberName);
-                students.add(student);
-                success(input);
             } else if (input.equals("professor")) {
-                String memberName = scanner.nextLine();
-                memberName = memberName.toLowerCase();
-                if (!memberName.matches("[a-zA-Z ]+")) {
-                    error("WI");
+                String memberName = scanner.nextLine().toLowerCase();
+                if(inputNameCheck(memberName)) {
+                    Professor professor = new Professor(memberName);
+                    professors.add(professor);
+                    success(input);
+                }
+                else {
                     return;
                 }
-                Professor professor = new Professor(memberName);
-                professors.add(professor);
-                success(input);
             } else if (input.equals("enroll")) {
                 boolean pass = false;
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
-                for (Course c : courses) {
-                    if (c.getCourseId().equals(courseId)) {
-                        for (Student s : students) {
-                            if (s.getMemberId().equals(memberId) && s.enroll(c)) {
-                                success(input);
-                                pass = true;
-                                break;
+                if(inputMemberCheck(memberId, courseId)) {
+                    for (Course c : courses) {
+                        if (c.getCourseId().equals(courseId)) {
+                            for (Student s : students) {
+                                if (s.getMemberId().equals(memberId) && s.enroll(c)) {
+                                    success(input);
+                                    pass = true;
+                                    break;
+                                }
                             }
                         }
+                        if(pass) break;
                     }
+                    if(!pass){
+                        error("WI");
+                        return;
+                    }
+                } else {
+                    return;
                 }
             } else if (input.equals("drop")) {
                 boolean pass = false;
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
-                for (Course c : courses) {
-                    if (c.getCourseId().equals(courseId)) {
-                        for (Student s : students) {
-                            if (s.getMemberId().equals(memberId) && s.drop(c)) {
-                                success(input);
-                                pass = true;
+                if(inputMemberCheck(memberId, courseId)) {
+                    for (Course c : courses) {
+                        if (c.getCourseId().equals(courseId)) {
+                            for (Student s : students) {
+                                if (s.getMemberId().equals(memberId) && s.drop(c)) {
+                                    success(input);
+                                    pass = true;
+                                    break;
+                                }
                             }
                         }
+                        if(pass) break;
                     }
+                    if(!pass){
+                        error("WI");
+                        return;
+                    }
+                } else {
+                    return;
                 }
             } else if (input.equals("teach")) {
                 boolean pass = false;
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
-                for (Professor p : professors) {
-                    if (p.getMemberId().equals(memberId)) {
-                        for (Course c : courses) {
-                            if (c.getCourseId().equals(courseId) && p.teach(c)) {
-                                success(input);
-                                pass = true;
+                if(inputMemberCheck(memberId, courseId)) {
+                    for (Professor p : professors) {
+                        if (p.getMemberId().equals(memberId)) {
+                            for (Course c : courses) {
+                                if (c.getCourseId().equals(courseId) && p.teach(c)) {
+                                    success(input);
+                                    pass = true;
+                                    break;
+                                }
                             }
                         }
+                        if(pass) break;
                     }
+                    if(!pass){
+                        error("WI");
+                        return;
+                    }
+                } else {
+                    return;
                 }
             } else if (input.equals("exempt")) {
                 boolean pass = false;
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
-                for (Professor p : professors) {
-                    if (p.getMemberId().equals(memberId)) {
-                        for (Course c : courses) {
-                            if (c.getCourseId().equals(courseId) && p.exempt(c)) {
-                                success(input);
-                                pass = true;
+                if(inputMemberCheck(memberId, courseId)) {
+                    for (Professor p : professors) {
+                        if (p.getMemberId().equals(memberId)) {
+                            for (Course c : courses) {
+                                if (c.getCourseId().equals(courseId) && p.exempt(c)) {
+                                    success(input);
+                                    pass = true;
+                                    break;
+                                }
                             }
                         }
+                        if (pass) break;
                     }
+                    if(!pass){
+                        error("WI");
+                        return;
+                    }
+                } else {
+                    return;
                 }
             }
         }
     }
-}
-
-class Util{
+    public static boolean inputMemberCheck(String memberId, String courseId){
+        if (!(memberId.matches("^\\d+$") && !memberId.isEmpty())) {
+            error("WI");
+            return false;
+        }
+        else if (!(courseId.matches("^\\d+$") && !courseId.isEmpty())) {
+            error("WI");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    public static boolean inputNameCheck(String memberName){
+        memberName = memberName.toLowerCase();
+        if (!memberName.matches("[a-zA-Z ]+")) {
+            error("WI");
+            return false;
+        }
+        else if (memberName.equals("course") || memberName.equals("student") || memberName.equals("professor")){
+            error("WI");
+            return false;
+        }
+        else if (memberName.equals("enroll") || memberName.equals("drop") || memberName.equals("teach")){
+            error("WI");
+            return false;
+        }
+        else if (memberName.equals("exempt")){
+            error("WI");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
     public static void fillInitialData() {
         Student s1 = new Student("Alice");
         Student s2 = new Student("Bob");
@@ -126,6 +196,12 @@ class Util{
         Professor p1 = new Professor("Ali");
         Professor p2 = new Professor("Ahmed");
         Professor p3 = new Professor("Andrey");
+        students.add(s1);
+        students.add(s2);
+        students.add(s3);
+        professors.add(p1);
+        professors.add(p2);
+        professors.add(p3);
         Course javaBeginner = new Course("java_beginner", CourseLevel.BACHELOR);
         Course javaIntermediate = new Course("java_intermediate", CourseLevel.BACHELOR);
         Course pythonBasics = new Course("python_basics", CourseLevel.BACHELOR);
@@ -133,6 +209,13 @@ class Util{
         Course advancedProgramming = new Course("advanced_programming", CourseLevel.MASTER);
         Course mathematicalAnalysis = new Course("mathematical_analysis", CourseLevel.MASTER);
         Course computerVision = new Course("computer_vision", CourseLevel.MASTER);
+        courses.add(javaBeginner);
+        courses.add(javaIntermediate);
+        courses.add(pythonBasics);
+        courses.add(algorithms);
+        courses.add(advancedProgramming);
+        courses.add(mathematicalAnalysis);
+        courses.add(computerVision);
         s1.enroll(javaBeginner);
         s1.enroll(javaIntermediate);
         s1.enroll(pythonBasics);
