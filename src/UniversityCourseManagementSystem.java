@@ -15,13 +15,16 @@ public final class UniversityCourseManagementSystem {
                 CourseLevel cL = CourseLevel.valueOf(courseLevel);
                 if(!(courseName.matches("[a-zA-Z]+(_[a-zA-Z]+)*") && !courseName.isEmpty())){
                     error("WI");
+                    return;
                 }
                 if(!(cL == CourseLevel.BACHELOR || cL == CourseLevel.MASTER)){
                     error("WI");
+                    return;
                 }
                 for (Course i: Course.getListOfCourses()) {
                     if(i.getCourseName().equals(courseName)){
                         error("CE");
+                        return;
                     }
                 }
                 courseName = courseName.toLowerCase();
@@ -30,7 +33,8 @@ public final class UniversityCourseManagementSystem {
                 String memberName = scanner.nextLine();
                 memberName = memberName.toLowerCase();
                 if(!memberName.matches("[a-zA-Z ]+")){
-                    System.out.println("ERR_SNAME");
+                    error("WI");
+                    return;
                 }
                 Student student = new Student(memberName);
                 success(input);
@@ -39,22 +43,43 @@ public final class UniversityCourseManagementSystem {
                 String memberName = scanner.nextLine();
                 memberName = memberName.toLowerCase();
                 if(!memberName.matches("[a-zA-Z ]+")){
-                    System.out.println("ERR_SNAME");
+                    error("WI");
+                    return;
                 }
                 Professor professor = new Professor(memberName);
                 success(input);
             }
             else if (input.equals("enroll")) {
+                boolean PASS = false;
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
-
-                success(input);
+                for(Course c : Course.getListOfCourses()){
+                    if(c.getCourseId().equals(courseId)) {
+                        for (Student s : c.getEnrolledStudents()) {
+                            if (s.getMemberId().equals(memberId)) {
+                                s.enroll(c);
+                                success(input);
+                                PASS = true;
+                            }
+                        }
+                    }
+                }
             }
             else if (input.equals("drop")) {
+                boolean PASS = false;
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
-
-                success(input);
+                for(Course c : Course.getListOfCourses()){
+                    if(c.getCourseId().equals(courseId)) {
+                        for (Student s : c.getEnrolledStudents()) {
+                            if (s.getMemberId().equals(memberId)) {
+                                s.drop(c);
+                                success(input);
+                                PASS = true;
+                            }
+                        }
+                    }
+                }
             }
             else if (input.equals("teach")) {
                 String memberId = scanner.nextLine();
@@ -70,7 +95,6 @@ public final class UniversityCourseManagementSystem {
             }
 
         }
-        System.out.println("Program execution stopped.");
     }
     static void fillInitialData(){
         Student s1 = new Student("Alice");
@@ -120,7 +144,6 @@ public final class UniversityCourseManagementSystem {
             case "WI":
                 System.out.println("Wrong inputs");
         }
-        return;
     }
     public static void success(String code) {
         switch (code){
@@ -155,9 +178,11 @@ class Professor extends UniversityMember{
 
     public boolean teach(Course course){
         if(this.assignedCourses.contains(course)){
+            UniversityCourseManagementSystem.error("PfT");
             return false;
         }
         if(this.assignedCourses.size() < 2) {
+            UniversityCourseManagementSystem.error("PfLoad");
             return false;
         }
         this.assignedCourses.add(course);
@@ -168,6 +193,7 @@ class Professor extends UniversityMember{
             this.assignedCourses.remove(course);
             return true;
         }
+        UniversityCourseManagementSystem.error("PfNotT");
         return false;
     }
 
@@ -194,7 +220,13 @@ class Course{
         listOfCourses.add(this);
     }
     public boolean isFull(){
-        return numberOfCourses == CAPACITY;
+        if(numberOfCourses == CAPACITY) {
+            return true;
+        }
+        else{
+            UniversityCourseManagementSystem.error("CF");
+            return false;
+        }
     }
 
     public static List<Course> getListOfCourses() {
@@ -209,8 +241,8 @@ class Course{
         return courseName;
     }
 
-    public int getCourseId() {
-        return courseId;
+    public String getCourseId() {
+        return Integer.toString(courseId);
     }
 
     public List<Student> getEnrolledStudents() {
@@ -235,16 +267,20 @@ class Student extends UniversityMember{
             this.enrolledCourses.remove(course);
             return true;
         }
+        UniversityCourseManagementSystem.error("StdNotEn");
         return false;
     }
     public boolean enroll(Course course){
         if(this.enrolledCourses.contains(course)){
+            UniversityCourseManagementSystem.error("StdEn");
             return false;
         }
         if(!(this.enrolledCourses.size() < MAX_ENROLLMENT)){
+            UniversityCourseManagementSystem.error("MaxEnStd");
             return false;
         }
         if(!(course.getEnrolledStudents().size() < course.getCAPACITY())){
+            UniversityCourseManagementSystem.error("CF");
             return false;
         }
         this.enrolledCourses.add(course);
@@ -267,8 +303,9 @@ abstract class UniversityMember{
     private String memberName;
     public UniversityMember(int memberId, String memberName){}
 
-    public int getMemberId() {
-        return memberId;
+    public String getMemberId() {
+        return Integer.toString(memberId);
+
     }
     public String getMemberName() {
         return memberName;
