@@ -2,11 +2,11 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class UniversityCourseManagementSystem {
+public final class UniversityCourseManagementSystem extends Util{
     public static void main(String[] args) {
-        ArrayList<Professor> professors = new ArrayList<Professor>();
-        ArrayList<Student> students = new ArrayList<Student>();
-        ArrayList<Course> courses = new ArrayList<Course>();
+        ArrayList<Professor> professors = new ArrayList<>();
+        ArrayList<Student> students = new ArrayList<>();
+        ArrayList<Course> courses = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
         fillInitialData();
         while (scanner.hasNextLine()) {
@@ -17,7 +17,7 @@ public final class UniversityCourseManagementSystem {
             if (input.equals("course")) {
                 String courseName = scanner.nextLine();
                 String courseLevel = scanner.nextLine();
-                CourseLevel cL = CourseLevel.valueOf(courseLevel);
+                CourseLevel cL = CourseLevel.valueOf(courseLevel.toUpperCase());
                 if (!(courseName.matches("[a-zA-Z]+(_[a-zA-Z]+)*") && !courseName.isEmpty())) {
                     error("WI");
                     return;
@@ -35,6 +35,7 @@ public final class UniversityCourseManagementSystem {
                 courseName = courseName.toLowerCase();
                 Course course = new Course(courseName, cL);
                 courses.add(course);
+                success(input);
             } else if (input.equals("student")) {
                 String memberName = scanner.nextLine();
                 memberName = memberName.toLowerCase();
@@ -62,7 +63,7 @@ public final class UniversityCourseManagementSystem {
                 for (Course c : courses) {
                     if (c.getCourseId().equals(courseId)) {
                         for (Student s : students) {
-                            if (s.getMemberId().equals(memberId) && s.enroll(c)){
+                            if (s.getMemberId().equals(memberId) && s.enroll(c)) {
                                 success(input);
                                 pass = true;
                                 break;
@@ -88,10 +89,10 @@ public final class UniversityCourseManagementSystem {
                 boolean pass = false;
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
-                for(Professor p : professors){
-                    if(p.getMemberId().equals(memberId)){
-                        for(Course c : courses){
-                            if(c.getCourseId().equals(courseId) && p.teach(c)){
+                for (Professor p : professors) {
+                    if (p.getMemberId().equals(memberId)) {
+                        for (Course c : courses) {
+                            if (c.getCourseId().equals(courseId) && p.teach(c)) {
                                 success(input);
                                 pass = true;
                             }
@@ -102,10 +103,10 @@ public final class UniversityCourseManagementSystem {
                 boolean pass = false;
                 String memberId = scanner.nextLine();
                 String courseId = scanner.nextLine();
-                for(Professor p : professors){
-                    if(p.getMemberId().equals(memberId)){
-                        for(Course c : courses){
-                            if(c.getCourseId().equals(courseId) && p.exempt(c)){
+                for (Professor p : professors) {
+                    if (p.getMemberId().equals(memberId)) {
+                        for (Course c : courses) {
+                            if (c.getCourseId().equals(courseId) && p.exempt(c)) {
                                 success(input);
                                 pass = true;
                             }
@@ -115,8 +116,10 @@ public final class UniversityCourseManagementSystem {
             }
         }
     }
+}
 
-    static void fillInitialData() {
+class Util{
+    public static void fillInitialData() {
         Student s1 = new Student("Alice");
         Student s2 = new Student("Bob");
         Student s3 = new Student("Alex");
@@ -203,7 +206,6 @@ public final class UniversityCourseManagementSystem {
         }
     }
 }
-
 enum CourseLevel {
     BACHELOR,
     MASTER;
@@ -348,6 +350,7 @@ class UniversityMember {
     private String memberName;
 
     private List<UniversityMember> universityMembers;
+
     public UniversityMember(int memberId, String memberName) {
         this.memberId = memberId;
         this.memberName = memberName;
