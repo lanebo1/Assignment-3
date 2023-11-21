@@ -3,9 +3,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class UniversityCourseManagementSystem{
-    private static ArrayList<Professor> professors = new ArrayList<>();
-    private static ArrayList<Student> students = new ArrayList<>();
-    private static ArrayList<Course> courses = new ArrayList<>();
+    private static final ArrayList<Professor> professors = new ArrayList<>();
+    private static final ArrayList<Student> students = new ArrayList<>();
+    private static final ArrayList<Course> courses = new ArrayList<>();
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         fillInitialData();
@@ -48,15 +48,15 @@ public final class UniversityCourseManagementSystem{
                     }
                 } else if (input.equals("enroll")) {
                     boolean pass = false;
-                    String memberId = scanner.nextLine();
-                    String courseId = scanner.nextLine();
-                    if (inputIdCheck(memberId, courseId)) {
-                        memberId = Integer.parseInt(memberId);
-                        courseId = Integer.parseInt(courseId);
+                    String memId = scanner.nextLine();
+                    String coId = scanner.nextLine();
+                    if (inputIdCheck(memId, coId) && checkStudent(memId) && checkCourse(coId)) {
+                        int memberId = Integer.parseInt(memId);
+                        int courseId = Integer.parseInt(coId);
                         for (Course c : courses) {
-                            if (c.getCourseId().equals(courseId)) {
+                            if (c.getCourseId() == courseId) {
                                 for (Student s : students) {
-                                    if (s.getMemberId().equals(memberId) && s.enroll(c)) {
+                                    if ((s.getMemberId() == memberId) && s.enroll(c)) {
                                         success(input);
                                         pass = true;
                                         break;
@@ -70,15 +70,15 @@ public final class UniversityCourseManagementSystem{
                     }
                 } else if (input.equals("drop")) {
                     boolean pass = false;
-                    String memberId = scanner.nextLine();
-                    String courseId = scanner.nextLine();
-                    if (inputIdCheck(memberId, courseId)) {
-                        memberId = Integer.parseInt(memberId);
-                        courseId = Integer.parseInt(courseId);
+                    String memId = scanner.nextLine();
+                    String coId = scanner.nextLine();
+                    if (inputIdCheck(memId, coId) && checkStudent(memId) && checkCourse(coId)) {
+                        int memberId = Integer.parseInt(memId);
+                        int courseId = Integer.parseInt(coId);
                         for (Course c : courses) {
-                            if (c.getCourseId().equals(courseId)) {
+                            if (c.getCourseId() == courseId) {
                                 for (Student s : students) {
-                                    if (s.getMemberId().equals(memberId) && s.drop(c)) {
+                                    if ((s.getMemberId() == memberId) && s.drop(c)) {
                                         success(input);
                                         pass = true;
                                         break;
@@ -92,37 +92,39 @@ public final class UniversityCourseManagementSystem{
                     }
                 } else if (input.equals("teach")) {
                     boolean pass = false;
-                    String memberId = scanner.nextLine();
-                    String courseId = scanner.nextLine();
-                    if (inputIdCheck(memberId, courseId)) {
-                        memberId = Integer.parseInt(memberId);
-                        courseId = Integer.parseInt(courseId);
+                    String memId = scanner.nextLine();
+                    String coId = scanner.nextLine();
+                    if (inputIdCheck(memId, coId) && checkProfessor(memId) && checkCourse(coId)) {
+                        int memberId = Integer.parseInt(memId);
+                        int courseId = Integer.parseInt(coId);
                         for (Professor p : professors) {
-                            if (p.getMemberId().equals(memberId)) {
+                            if (p.getMemberId() == memberId) {
                                 for (Course c : courses) {
-                                    if (c.getCourseId().equals(courseId) && p.teach(c)) {
+                                    if ((c.getCourseId() == courseId) && p.teach(c)) {
                                         success(input);
                                         pass = true;
                                         break;
                                     }
                                 }
                             }
-                            if (pass) break;
+                            if (pass) {
+                                break;
+                            }
                         }
                     } else {
                         error("WI");
                     }
                 } else if (input.equals("exempt")) {
                     boolean pass = false;
-                    String memberId = scanner.nextLine();
-                    String courseId = scanner.nextLine();
-                    if (inputIdCheck(memberId, courseId)) {
-                        memberId = Integer.parseInt(memberId);
-                        courseId = Integer.parseInt(courseId);
+                    String memId = scanner.nextLine();
+                    String coId = scanner.nextLine();
+                    if (inputIdCheck(memId, coId) && checkProfessor(memId) && checkCourse(coId)) {
+                        int memberId = Integer.parseInt(memId);
+                        int courseId = Integer.parseInt(coId);
                         for (Professor p : professors) {
-                            if (p.getMemberId().equals(memberId)) {
+                            if (p.getMemberId() == memberId) {
                                 for (Course c : courses) {
-                                    if (c.getCourseId().equals(courseId) && p.exempt(c)) {
+                                    if ((c.getCourseId() == courseId) && p.exempt(c)) {
                                         success(input);
                                         pass = true;
                                         break;
@@ -155,6 +157,36 @@ public final class UniversityCourseManagementSystem{
         else {
             return true;
         }
+    }
+    public static boolean checkStudent(String Id){
+        int memberId = Integer.parseInt(Id);
+        for(Student s : students){
+            if(s.getMemberId() == memberId){
+                return true;
+            }
+        }
+        error("WI");
+        return false;
+    }
+    public static boolean checkCourse(String Id){
+        int courseId = Integer.parseInt(Id);
+        for(Course c : courses){
+            if(c.getCourseId() == courseId){
+                return true;
+            }
+        }
+        error("WI");
+        return false;
+    }
+    public static boolean checkProfessor(String Id){
+        int memberId = Integer.parseInt(Id);
+        for(Professor p : professors){
+            if(p.getMemberId() == memberId){
+                return true;
+            }
+        }
+        error("WI");
+        return false;
     }
     public static boolean inputIdCheck(String memberId, String courseId){
         int flag = 0;
@@ -453,8 +485,8 @@ class UniversityMember {
         this.memberName = memberName;
     }
 
-    public String getMemberId() {
-        return Integer.toString(memberId);
+    public int getMemberId() {
+        return memberId;
 
     }
 
