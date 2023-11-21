@@ -426,6 +426,7 @@ class Student extends UniversityMember implements Enrollable {
         super(UniversityMember.getNumberOfMembers(), memberName);
     }
 
+    @Override
     public boolean drop(Course course) {
         if (this.enrolledCourses.contains(course)) {
             this.enrolledCourses.remove(course);
@@ -435,6 +436,7 @@ class Student extends UniversityMember implements Enrollable {
         return false;
     }
 
+    @Override
     public boolean enroll(Course course) {
         if (this.enrolledCourses.contains(course)) {
             UniversityCourseManagementSystem.error("StdEn");
