@@ -2,10 +2,30 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * The University course management system.
+ */
 public final class UniversityCourseManagementSystem {
+    /**
+     * The constant PROFESSORS.
+     */
     private static final ArrayList<Professor> PROFESSORS = new ArrayList<>();
+    /**
+     * The constant STUDENTS.
+     */
     private static final ArrayList<Student> STUDENTS = new ArrayList<>();
+    /**
+     * The constant COURSES.
+     */
     private static final ArrayList<Course> COURSES = new ArrayList<>();
+
+
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         fillInitialData();
@@ -150,17 +170,13 @@ public final class UniversityCourseManagementSystem {
             error("WI");
         }
     }
-    public static boolean inputMemberCheck(String memberId, String courseId) {
-        if (!(memberId.matches("^\\d+$") && !memberId.isEmpty())) {
-            error("WI");
-            return false;
-        } else if (!(courseId.matches("^\\d+$") && !courseId.isEmpty())) {
-            error("WI");
-            return false;
-        } else {
-            return true;
-        }
-    }
+
+    /**
+     * Check student id boolean.
+     *
+     * @param id the id of student
+     * @return boolean/error
+     */
     public static boolean checkStudent(String id) {
         int memberId = Integer.parseInt(id);
         for (Student s : STUDENTS) {
@@ -171,6 +187,13 @@ public final class UniversityCourseManagementSystem {
         error("WI");
         return false;
     }
+
+    /**
+     * Check course id boolean.
+     *
+     * @param id the id of course
+     * @return boolean/error
+     */
     public static boolean checkCourse(String id) {
         int courseId = Integer.parseInt(id);
         for (Course c : COURSES) {
@@ -181,6 +204,13 @@ public final class UniversityCourseManagementSystem {
         error("WI");
         return false;
     }
+
+    /**
+     * Check professor id boolean.
+     *
+     * @param id the id of professor
+     * @return boolean/error
+     */
     public static boolean checkProfessor(String id) {
         int memberId = Integer.parseInt(id);
         for (Professor p : PROFESSORS) {
@@ -191,6 +221,14 @@ public final class UniversityCourseManagementSystem {
         error("WI");
         return false;
     }
+
+    /**
+     * Input id check boolean.
+     *
+     * @param memberId the member id
+     * @param courseId the course id
+     * @return boolean/error
+     */
     public static boolean inputIdCheck(String memberId, String courseId) {
         int flag = 0;
         try {
@@ -207,6 +245,14 @@ public final class UniversityCourseManagementSystem {
         }
         return flag == 2;
     }
+
+    /**
+     * Input name check boolean.
+     *
+     * @param memberName the member name
+     * @param code       the code of command
+     * @return boolean/error
+     */
     public static boolean inputNameCheck(String memberName, String code) {
         memberName = memberName.toLowerCase();
         if (!memberName.matches("[a-zA-Z ]+") && !code.equals("course")) {
@@ -229,6 +275,10 @@ public final class UniversityCourseManagementSystem {
             return true;
         }
     }
+
+    /**
+     * Fill initial data.
+     */
     public static void fillInitialData() {
         Student s1 = new Student("Alice");
         Student s2 = new Student("Bob");
@@ -269,6 +319,11 @@ public final class UniversityCourseManagementSystem {
         p3.teach(mathematicalAnalysis);
     }
 
+    /**
+     * Error.
+     *
+     * @param code the code of the error
+     */
     public static void error(String code) {
         switch (code) {
             case "CE":
@@ -305,6 +360,11 @@ public final class UniversityCourseManagementSystem {
         System.exit(0);
     }
 
+    /**
+     * Success.
+     *
+     * @param code the code of success
+     */
     public static void success(String code) {
         switch (code) {
             case "course":
@@ -330,19 +390,49 @@ public final class UniversityCourseManagementSystem {
         }
     }
 }
+
+/**
+ * The enum Course level.
+ */
 enum CourseLevel {
+    /**
+     * Bachelor course level.
+     */
     BACHELOR,
+    /**
+     * Master course level.
+     */
     MASTER;
 }
 
+/**
+ * The type Professor extends UniversityMember.
+ */
 class Professor extends UniversityMember {
+    /**
+     * The constant MAX_LOAD.
+     */
     private static final int MAX_LOAD = 2;
+    /**
+     * The Assigned courses.
+     */
     private List<Course> assignedCourses = new ArrayList<>();
 
+    /**
+     * Instantiates a new Professor.
+     *
+     * @param memberName the member name
+     */
     public Professor(String memberName) {
         super(UniversityMember.getNumberOfMembers(), memberName);
     }
 
+    /**
+     * Teach boolean.
+     *
+     * @param course the course
+     * @return boolean/error
+     */
     public boolean teach(Course course) {
         if (this.assignedCourses.contains(course)) {
             UniversityCourseManagementSystem.error("PfT");
@@ -356,6 +446,12 @@ class Professor extends UniversityMember {
         return true;
     }
 
+    /**
+     * Exempt boolean.
+     *
+     * @param course the course
+     * @return boolean/error
+     */
     public boolean exempt(Course course) {
         if (this.assignedCourses.contains(course)) {
             this.assignedCourses.remove(course);
@@ -364,21 +460,47 @@ class Professor extends UniversityMember {
         UniversityCourseManagementSystem.error("PfNotT");
         return false;
     }
-
-    public List<Course> getAssignedCourses() {
-        return assignedCourses;
-    }
 }
 
+/**
+ * The type Course.
+ */
 class Course {
+    /**
+     * The constant CAPACITY.
+     */
     private static final int CAPACITY = 3;
+    /**
+     * The constant numberOfCourses.
+     */
     private static int numberOfCourses = 0;
+    /**
+     * The Course id.
+     */
     private int courseId;
+    /**
+     * The Course name.
+     */
     private String courseName;
+    /**
+     * The Enrolled students.
+     */
     private final List<Student> enrolledStudents;
+    /**
+     * The Course level.
+     */
     private final CourseLevel courseLevel;
+    /**
+     * The List of courses.
+     */
     private static List<Course> listOfCourses;
 
+    /**
+     * Instantiates a new Course.
+     *
+     * @param courseName  the course name
+     * @param courseLevel the course level
+     */
     Course(String courseName, CourseLevel courseLevel) {
         this.courseName = courseName;
         this.courseLevel = courseLevel;
@@ -389,43 +511,80 @@ class Course {
         listOfCourses.add(this);
     }
 
+    /**
+     * Is full boolean.
+     *
+     * @return boolean
+     */
     public boolean isFull() {
         return numberOfCourses >= CAPACITY;
     }
 
-    public static List<Course> getListOfCourses() {
-        return listOfCourses;
-    }
-
-    public CourseLevel getCourseLevel() {
-        return courseLevel;
-    }
-
+    /**
+     * Gets course name.
+     *
+     * @return course name
+     */
     public String getCourseName() {
         return courseName;
     }
 
+    /**
+     * Gets course id.
+     *
+     * @return course id
+     */
     public int getCourseId() {
         return courseId;
     }
 
+    /**
+     * Gets enrolled students.
+     *
+     * @return enrolled students
+     */
     public List<Student> getEnrolledStudents() {
         return enrolledStudents;
     }
 
+    /**
+     * Gets capacity.
+     *
+     * @return capacity
+     */
     public int getCAPACITY() {
         return CAPACITY;
     }
 }
 
+/**
+ * The type Student.
+ */
 class Student extends UniversityMember implements Enrollable {
+    /**
+     * The constant MAX_ENROLLMENT.
+     */
     private static final int MAX_ENROLLMENT = 3;
+    /**
+     * The Enrolled courses.
+     */
     private List<Course> enrolledCourses = new ArrayList<>();
 
+    /**
+     * Instantiates a new Student.
+     *
+     * @param memberName the member name
+     */
     public Student(String memberName) {
         super(UniversityMember.getNumberOfMembers(), memberName);
     }
 
+    /**
+     * Drop boolean.
+     *
+     * @param course the course
+     * @return boolean/error
+     */
     @Override
     public boolean drop(Course course) {
         if (this.enrolledCourses.contains(course)) {
@@ -436,6 +595,12 @@ class Student extends UniversityMember implements Enrollable {
         return false;
     }
 
+    /**
+     * Enroll boolean.
+     *
+     * @param course the course
+     * @return boolean/error
+     */
     @Override
     public boolean enroll(Course course) {
         if (this.enrolledCourses.contains(course)) {
@@ -453,43 +618,79 @@ class Student extends UniversityMember implements Enrollable {
         this.enrolledCourses.add(course);
         return true;
     }
-
-    public List<Course> getEnrolledCourses() {
-        return enrolledCourses;
-    }
 }
 
+/**
+ * The interface Enrollable.
+ */
 interface Enrollable {
+    /**
+     * Drop boolean.
+     *
+     * @param course the course
+     * @return boolean
+     */
     public boolean drop(Course course);
 
+    /**
+     * Enroll boolean.
+     *
+     * @param course the course
+     * @return boolean
+     */
     public boolean enroll(Course course);
 }
 
+/**
+ * The type University member.
+ */
 class UniversityMember {
+    /**
+     * The constant numberOfMembers.
+     */
     private static int numberOfMembers = 0;
+    /**
+     * The Member id.
+     */
     private int memberId;
+    /**
+     * The Member name.
+     */
     private String memberName;
 
-    private List<UniversityMember> universityMembers;
-
+    /**
+     * Instantiates a new University member.
+     *
+     * @param memberId   the member id
+     * @param memberName the member name
+     */
     public UniversityMember(int memberId, String memberName) {
         this.memberId = memberId;
         this.memberName = memberName;
     }
 
+    /**
+     * Gets member id.
+     *
+     * @return member id
+     */
     public int getMemberId() {
         return memberId;
 
     }
 
-    public String getMemberName() {
-        return memberName;
-    }
-
+    /**
+     * Add number of members.
+     */
     public static void addNumberOfMembers() {
         numberOfMembers += 1;
     }
 
+    /**
+     * Gets number of members.
+     *
+     * @return number of members
+     */
     public static int getNumberOfMembers() {
         addNumberOfMembers();
         return numberOfMembers;
