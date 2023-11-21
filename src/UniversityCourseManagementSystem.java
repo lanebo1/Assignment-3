@@ -50,7 +50,9 @@ public final class UniversityCourseManagementSystem{
                     boolean pass = false;
                     String memberId = scanner.nextLine();
                     String courseId = scanner.nextLine();
-                    if (inputMemberCheck(memberId, courseId)) {
+                    if (inputIdCheck(memberId, courseId)) {
+                        memberId = Integer.parseInt(memberId);
+                        courseId = Integer.parseInt(courseId);
                         for (Course c : courses) {
                             if (c.getCourseId().equals(courseId)) {
                                 for (Student s : students) {
@@ -70,7 +72,9 @@ public final class UniversityCourseManagementSystem{
                     boolean pass = false;
                     String memberId = scanner.nextLine();
                     String courseId = scanner.nextLine();
-                    if (inputMemberCheck(memberId, courseId)) {
+                    if (inputIdCheck(memberId, courseId)) {
+                        memberId = Integer.parseInt(memberId);
+                        courseId = Integer.parseInt(courseId);
                         for (Course c : courses) {
                             if (c.getCourseId().equals(courseId)) {
                                 for (Student s : students) {
@@ -90,7 +94,9 @@ public final class UniversityCourseManagementSystem{
                     boolean pass = false;
                     String memberId = scanner.nextLine();
                     String courseId = scanner.nextLine();
-                    if (inputMemberCheck(memberId, courseId)) {
+                    if (inputIdCheck(memberId, courseId)) {
+                        memberId = Integer.parseInt(memberId);
+                        courseId = Integer.parseInt(courseId);
                         for (Professor p : professors) {
                             if (p.getMemberId().equals(memberId)) {
                                 for (Course c : courses) {
@@ -110,7 +116,9 @@ public final class UniversityCourseManagementSystem{
                     boolean pass = false;
                     String memberId = scanner.nextLine();
                     String courseId = scanner.nextLine();
-                    if (inputMemberCheck(memberId, courseId)) {
+                    if (inputIdCheck(memberId, courseId)) {
+                        memberId = Integer.parseInt(memberId);
+                        courseId = Integer.parseInt(courseId);
                         for (Professor p : professors) {
                             if (p.getMemberId().equals(memberId)) {
                                 for (Course c : courses) {
@@ -146,6 +154,27 @@ public final class UniversityCourseManagementSystem{
         }
         else {
             return true;
+        }
+    }
+    public static boolean inputIdCheck(String memberId, String courseId){
+        int flag = 0;
+        try {
+            Integer.parseInt(memberId);
+            flag += 1;
+        } catch (NumberFormatException e) {
+            error("WI");
+        }
+        try {
+            Integer.parseInt(courseId);
+            flag += 1;
+        } catch (NumberFormatException e) {
+            error("WI");
+        }
+        if(flag == 2){
+            return true;
+        }
+        else{
+            return false;
         }
     }
     public static boolean inputNameCheck(String memberName, String code){
@@ -354,8 +383,8 @@ class Course {
         return courseName;
     }
 
-    public String getCourseId() {
-        return Integer.toString(courseId);
+    public int getCourseId() {
+        return courseId;
     }
 
     public List<Student> getEnrolledStudents() {
